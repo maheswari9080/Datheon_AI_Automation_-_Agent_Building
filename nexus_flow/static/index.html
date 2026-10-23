@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS Flow AI — Intelligent Business Automation Hub</title>
+  <meta name="description" content="Autonomous enterprise AI business operations platform: Lead, Support, Invoice, and Enterprise Orchestration under a unified command center.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-badge">NX</div>
+      <div>
+        <div class="brand-title">NEXUS Flow</div>
+        <div class="brand-sub">Autonomous Hub</div>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li>
+        <a class="nav-item active" data-view="command-center">
+          <span>⚡</span> Command Center
+        </a>
+      </li>
+      <li>
+        <a class="nav-item" data-view="lead-intelligence">
+          <span>🎯</span> Lead Intelligence
+        </a>
+      </li>
+      <li>
+        <a class="nav-item" data-view="support-intelligence">
+          <span>🛡️</span> Support Intelligence
+        </a>
+      </li>
+      <li>
+        <a class="nav-item" data-view="invoice-intelligence">
+          <span>📄</span> Invoice Intelligence
+        </a>
+      </li>
+      <li>
+        <a class="nav-item" data-view="enterprise-orchestration">
+          <span>🌐</span> Enterprise Orchestration
+        </a>
+      </li>
+      <li>
+        <a class="nav-item" data-view="approval-center">
+          <span>⚖️</span> Approval Center
+          <span class="nav-badge" id="sidebar-approval-count">0</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-item" data-view="integration-registry">
+          <span>🔌</span> Integration Registry
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div>OPERATIONAL MODE</div>
+      <div class="mode-pill" id="global-mode-pill">DEMO / MOCK</div>
+    </div>
+  </aside>
+
+  <!-- Main Display Area -->
+  <main class="main-content">
+    <header class="topbar">
+      <div class="view-title-container">
+        <h1 id="view-title">Mission Control Command Center</h1>
+      </div>
+      <div class="topbar-actions">
+        <div class="status-indicator">
+          <div class="pulse-dot"></div>
+          <span id="system-status-text">All Engines Synchronized</span>
+        </div>
+        <button class="btn btn-primary" id="btn-refresh-telemetry">
+          <span>🔄</span> Refresh Telemetry
+        </button>
+      </div>
+    </header>
+
+    <!-- VIEW 1: Command Center -->
+    <section class="page-container active" id="view-command-center">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-header">Qualified Leads</div>
+          <div class="kpi-value" id="kpi-leads-count">0</div>
+          <div class="kpi-sub" id="kpi-leads-sub">Avg SLA: 0.0s (Target &lt;10s)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-header">Support Volume</div>
+          <div class="kpi-value" id="kpi-support-count">0</div>
+          <div class="kpi-sub" id="kpi-support-sub">Draft-Only Mode Enforced</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-header">Invoices Audited</div>
+          <div class="kpi-value" id="kpi-invoices-count">0</div>
+          <div class="kpi-sub" id="kpi-invoices-sub">Strict Arithmetic ±$0.01</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-header">Verified Revenue</div>
+          <div class="kpi-value" id="kpi-revenue">$0.00</div>
+          <div class="kpi-sub">Stripe HMAC-SHA256 Verified</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>📡</span> Autonomous Activity Stream</div>
+          <span class="tag tag-cold">Live Telemetry Feed</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Event Type</th>
+                <th>Action</th>
+                <th>Status</th>
+                <th>Entity / Reference</th>
+                <th>Latency</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="telemetry-stream-body">
+              <tr><td colspan="6" style="text-align:center; color:var(--text-dim);">Awaiting telemetry events...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: Lead Intelligence -->
+    <section class="page-container" id="view-lead-intelligence">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>🚀</span> Inbound Lead Intake Simulator</div>
+          <button class="btn btn-primary" id="btn-toggle-lead-form">Show / Hide Simulator</button>
+        </div>
+        <form id="lead-intake-form" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px;">
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-dim);">Full Name</label>
+            <input class="input" id="lead-name" value="Marcus Vance" required>
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-dim);">Business Email</label>
+            <input class="input" type="email" id="lead-email" value="marcus.vance@synthetix-ai.io" required>
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-dim);">Company Name</label>
+            <input class="input" id="lead-company" value="Synthetix AI">
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-dim);">Declared Budget ($)</label>
+            <input class="input" type="number" id="lead-budget" value="45000">
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-dim);">Company Size</label>
+            <select class="select" id="lead-size">
+              <option value="500+">500+ Employees (Enterprise)</option>
+              <option value="51-200" selected>51-200 Employees (Mid-Market)</option>
+              <option value="11-50">11-50 Employees (Growth)</option>
+              <option value="1-10">1-10 Employees (Startup)</option>
+            </select>
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <label style="font-size:0.75rem; color:var(--text-dim);">Business Requirements</label>
+            <textarea class="textarea" id="lead-needs" rows="2">Automate sales qualification and triage emails with Airtable and Slack notification.</textarea>
+          </div>
+          <div style="grid-column: 1 / -1; display:flex; justify-content:flex-end;">
+            <button type="submit" class="btn btn-primary" id="btn-submit-lead">⚡ Qualify &amp; Route Lead</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>📋</span> Real Inbound Leads Pipeline</div>
+          <div style="display:flex; gap:10px;">
+            <select class="select" id="filter-lead-priority" style="width:140px;">
+              <option value="">All Priorities</option>
+              <option value="HOT">HOT</option>
+              <option value="WARM">WARM</option>
+              <option value="COLD">COLD</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Contact</th>
+                <th>Company</th>
+                <th>Budget</th>
+                <th>Score</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Airtable Sync</th>
+                <th>Latency</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="leads-table-body">
+              <tr><td colspan="9" style="text-align:center;">Loading leads...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: Support Intelligence -->
+    <section class="page-container" id="view-support-intelligence">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>📩</span> Inbound Support Email Triage Simulator</div>
+        </div>
+        <form id="support-sim-form" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-dim);">Sender Email</label>
+            <input class="input" type="email" id="support-sender" value="billing-lead@apex-industries.com" required>
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-dim);">Email Subject</label>
+            <input class="input" id="support-subject" value="Urgent: Duplicate subscription billing on Invoice #4092" required>
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <label style="font-size:0.75rem; color:var(--text-dim);">Email Message Body (Untrusted Data)</label>
+            <textarea class="textarea" id="support-body" rows="3" required>We noticed two simultaneous charges of $4,500 on our corporate Visa for invoice #4092. Please issue a refund immediately.</textarea>
+          </div>
+          <div style="grid-column: 1 / -1; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:0.75rem; color:var(--accent-amber);">🔒 Draft-Only Mode: Email will NOT be dispatched automatically.</span>
+            <button type="submit" class="btn btn-primary" id="btn-submit-support">🤖 Triage &amp; Draft Response</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>📬</span> Support Triage Queue &amp; Grounded Drafts</div>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Sender</th>
+                <th>Subject</th>
+                <th>Intent</th>
+                <th>Urgency</th>
+                <th>Sentiment</th>
+                <th>Security Filter</th>
+                <th>Escalation</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="support-table-body">
+              <tr><td colspan="8" style="text-align:center;">Loading tickets...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: Invoice Intelligence -->
+    <section class="page-container" id="view-invoice-intelligence">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>📤</span> Upload Financial Document (PDF / Receipts)</div>
+          <span class="tag tag-pending">Arithmetic Verification Engine ±$0.01</span>
+        </div>
+        <div class="dropzone" id="invoice-dropzone">
+          <div style="font-size:2rem; margin-bottom:10px;">📄</div>
+          <div style="font-weight:600; font-size:1rem; margin-bottom:4px;">Drag and drop PDF invoice here, or click to browse</div>
+          <div style="font-size:0.78rem; color:var(--text-dim);">Supports standard enterprise PDFs, scanned documents, and multi-line invoices</div>
+          <input type="file" id="invoice-file-input" accept=".pdf,.txt" style="display:none;">
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>📑</span> Extracted Financial Ledger</div>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Filename</th>
+                <th>Vendor</th>
+                <th>Invoice #</th>
+                <th>Extracted Total</th>
+                <th>Calculated Sum</th>
+                <th>Arithmetic Audit</th>
+                <th>Duplicate Check</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="invoices-table-body">
+              <tr><td colspan="9" style="text-align:center;">Loading invoices...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: Enterprise Orchestration -->
+    <section class="page-container" id="view-enterprise-orchestration">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-header">Intake Projects</div>
+          <div class="kpi-value" id="kpi-orch-projects">0</div>
+          <div class="kpi-sub">Format: PRJ-YYYYMM-XXXX</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-header">Active Retainers</div>
+          <div class="kpi-value" id="kpi-orch-active">0</div>
+          <div class="kpi-sub">Contract + Payment Verified</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-header">Stripe Signature</div>
+          <div class="kpi-value" style="color:var(--accent-emerald);">HMAC-SHA256</div>
+          <div class="kpi-sub">Anti-Replay Idempotent</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-header">Executive Digest</div>
+          <button class="btn btn-primary" id="btn-generate-digest" style="margin-top:8px; width:100%;">
+            <span>📊</span> Compile Digest
+          </button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>🏢</span> Active Operations Projects</div>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Project Code</th>
+                <th>Client</th>
+                <th>Email</th>
+                <th>Tier</th>
+                <th>Contract</th>
+                <th>Payment</th>
+                <th>Slack Channel</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="projects-table-body">
+              <tr><td colspan="8" style="text-align:center;">Loading projects...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 6: Approval Center -->
+    <section class="page-container" id="view-approval-center">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>⚖️</span> Pending Consequential Approvals</div>
+          <span class="tag tag-hot" id="approval-queue-count-badge">0 Pending</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Requested By</th>
+                <th>Timestamp</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="approvals-table-body">
+              <tr><td colspan="6" style="text-align:center;">No pending approvals.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 7: Integration Registry -->
+    <section class="page-container" id="view-integration-registry">
+      <div class="kpi-grid">
+        <div class="kpi-card" id="card-airtable-health">
+          <div class="kpi-header">Airtable Base</div>
+          <div class="kpi-value" style="font-size:1.3rem;">Connected (Mock)</div>
+          <div class="kpi-sub">Leads &amp; Projects Sync</div>
+        </div>
+        <div class="kpi-card" id="card-slack-health">
+          <div class="kpi-header">Slack Webhook</div>
+          <div class="kpi-value" style="font-size:1.3rem;">Connected (Mock)</div>
+          <div class="kpi-sub">Alerts &amp; Dynamic Channels</div>
+        </div>
+        <div class="kpi-card" id="card-stripe-health">
+          <div class="kpi-header">Stripe Cryptography</div>
+          <div class="kpi-value" style="font-size:1.3rem;">Active (HMAC)</div>
+          <div class="kpi-sub">Official Signing Verification</div>
+        </div>
+        <div class="kpi-card" id="card-sheets-health">
+          <div class="kpi-header">Google Sheets</div>
+          <div class="kpi-value" style="font-size:1.3rem;">Ready (Mock)</div>
+          <div class="kpi-sub">OWASP Formula Escaped</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>📜</span> Comprehensive Audit Log</div>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Event</th>
+                <th>Action</th>
+                <th>Status</th>
+                <th>Details</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="audit-full-table-body">
+              <tr><td colspan="5" style="text-align:center;">Loading audit trail...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Generic Modal (Lead Talking Points, Draft Viewer, Digest Viewer) -->
+  <div class="modal-overlay" id="detail-modal">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 id="modal-title" style="font-size:1.15rem; font-weight:700;">Detail View</h3>
+        <button class="btn" id="btn-close-modal" style="padding:4px 10px;">✕</button>
+      </div>
+      <div id="modal-body" style="font-size:0.88rem; line-height:1.6; color:var(--text-muted);">
+        <!-- Injected dynamic content -->
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
