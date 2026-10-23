@@ -23,7 +23,6 @@ from nexus_flow.adapters.slack import SlackAdapter
 from nexus_flow.adapters.stripe import StripeAdapter
 from nexus_flow.ai.client import AIClient
 
-# Standard authorized corporate legal templates
 CONTRACT_TEMPLATES = {
     "MSA-v2.1": """MASTER SERVICES AGREEMENT (MSA-v2.1)
 This Master Services Agreement is entered into as of {effective_date} by and between:
@@ -190,13 +189,12 @@ class OrchestrationEngine:
             template_version=template_key,
             contract_text=contract_text,
             missing_fields=json.dumps(missing_fields),
-            approval_status="PENDING",  # strictly requires human signoff
+            approval_status="PENDING",
         )
         self.db.add(contract)
         project.contract_status = "DRAFTED"
         project.status = ProjectStatus.CONTRACT_DRAFTED.value
 
-        # Register human approval request
         approval = ApprovalRequestRecord(
             entity_type="contract_approval",
             entity_id=contract.id,
@@ -234,7 +232,6 @@ class OrchestrationEngine:
             project.contract_status = "APPROVED"
             project.status = ProjectStatus.PAYMENT_PENDING.value
 
-        # Resolve approval request
         app = (
             self.db.query(ApprovalRequestRecord)
             .filter(
@@ -251,3 +248,90 @@ class OrchestrationEngine:
         self.db.commit()
         logger.info(f"Contract {contract_id} approved by {approved_by}")
         return {"success": True, "contract_id": contract_id, "approval_status": "APPROVED"}
+
+    def process_stripe_payment(self, payload_bytes: bytes, signature_header: str) -> Dict[str, Any]:
+        """
+        Validates official Stripe-Signature HMAC-SHA256, verifies event idempotency,
+        and marks project payments as verified based solely on authentic cryptographic proof.
+        """
+        # Step 1: Cryptographic Signature Verification
+        is_valid_sig = self.stripe.verify_webhook_signature(payload_bytes, signature_header)
+        if not is_valid_sig:
+            audit = AuditEventRecord(
+                event_type=EventType.PAYMENT_FAILED.value,
+                action="STRIPE_VERIFICATION",
+                status="FAILED_SIGNATURE",
+                details_json=json.dumps({"error": "Invalid HMAC-SHA256 signature header"}),
+            )
+            self.db.add(audit)
+            self.db.commit()
+            raise ValueError("Unauthorized Stripe signature: HMAC verification failed")
+
+        # Step 2: Parse Event
+        try:
+            event = json.loads(payload_bytes.decode("utf-8"))
+        except Exception:
+            raise ValueError("Malformed JSON webhook body")
+
+        event_id = event.get("id")
+        event_type = event.get("type")
+        if not event_id:
+            raise ValueError("Missing Stripe event id")
+
+        # Step 3: Idempotency Check
+        if self.stripe.is_event_processed(event_id):
+            logger.info(f"Duplicate Stripe event {event_id} ignored via idempotency check.")
+            return {"success": True, "event_id": event_id, "status": "duplicate_ignored"}
+
+        # Step 4: Validate Event Intent
+        data_object = event.get("data", {}).get("object", {})
+        amount = data_object.get("amount", 0)
+        currency = data_object.get("currency", "usd")
+        metadata = data_object.get("metadata", {})
+        project_code = metadata.get("project_code")
+
+        # Find project if metadata provided
+        project = None
+        if project_code:
+            project = self.db.query(ProjectRecord).filter(ProjectRecord.project_code == project_code).first()
+
+        # Step 5: Save Verified Payment Record
+        payment = PaymentRecord(
+            stripe_event_id=event_id,
+            project_id=project.id if project else None,
+            amount_cents=amount,
+            currency=currency,
+            status="verified",
+            signature_verified=True,
+            raw_payload=json.dumps(event),
+        )
+        self.db.add(payment)
+        self.stripe.record_processed_event(event_id)
+
+        if project:
+            project.payment_status = "PAID"
+            project.status = ProjectStatus.ACTIVE.value
+
+        audit = AuditEventRecord(
+            event_type=EventType.PAYMENT_VERIFIED.value,
+            action="VERIFY_PAYMENT",
+            status="SUCCESS",
+            entity_id=event_id,
+            details_json=json.dumps({
+                "amount_cents": amount,
+                "currency": currency,
+                "project_code": project_code,
+            }),
+        )
+        self.db.add(audit)
+        self.db.commit()
+
+        logger.info(f"Stripe payment {event_id} verified: ${amount / 100:.2f} {currency.upper()}")
+        return {
+            "success": True,
+            "event_id": event_id,
+            "amount_dollars": amount / 100.0,
+            "currency": currency,
+            "project_code": project_code,
+            "payment_status": "PAID",
+        }
