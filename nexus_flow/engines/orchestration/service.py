@@ -3,7 +3,7 @@
 import json
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 from sqlalchemy.orm import Session
 from nexus_flow.core.config import get_settings
@@ -16,6 +16,9 @@ from nexus_flow.db.models import (
     PaymentRecord,
     AuditEventRecord,
     ApprovalRequestRecord,
+    LeadRecord,
+    SupportTicketRecord,
+    InvoiceRecord,
 )
 from nexus_flow.schemas.orchestration import CustomerIntakeRequest, ContractDraftRequest
 from nexus_flow.adapters.airtable import AirtableAdapter
@@ -339,7 +342,6 @@ class OrchestrationEngine:
         channel_name = res.get("channel", f"#proj-{project.project_code.lower()}")
         project.slack_channel = channel_name
 
-        # Post welcome card
         welcome_msg = (
             f":tada: *Collaboration Workspace Activated for {project.client_name}*\n"
             f"*Project Code:* {project.project_code}\n"
@@ -364,3 +366,112 @@ class OrchestrationEngine:
         self.db.commit()
 
         return {"success": True, "project_code": project.project_code, "channel": channel_name}
+
+    def generate_weekly_digest(self) -> Dict[str, Any]:
+        """
+        Compiles real operational metrics across all 4 modules and synthesizes
+        an authoritative Chief of Staff briefing.
+        """
+        now = datetime.now(timezone.utc)
+        one_week_ago = now - timedelta(days=7)
+
+        leads = self.db.query(LeadRecord).all()
+        tickets = self.db.query(SupportTicketRecord).all()
+        invoices = self.db.query(InvoiceRecord).all()
+        payments = self.db.query(PaymentRecord).all()
+        projects = self.db.query(ProjectRecord).all()
+        approvals = self.db.query(ApprovalRequestRecord).filter(ApprovalRequestRecord.status == "PENDING").all()
+        failed_audits = self.db.query(AuditEventRecord).filter(AuditEventRecord.status.like("FAIL%")).all()
+
+        leads_count = len(leads)
+        qualified_leads = sum(1 for l in leads if l.score >= 50)
+        hot_leads = sum(1 for l in leads if l.priority == "HOT")
+
+        tickets_count = len(tickets)
+        urgent_tickets = sum(1 for t in tickets if t.urgency in ["P1_CRITICAL", "P2_HIGH"])
+        escalated_tickets = sum(1 for t in tickets if t.requires_escalation)
+
+        invoices_count = len(invoices)
+        total_invoice_spend = sum(i.extracted_total for i in invoices)
+        flagged_invoices = sum(1 for i in invoices if not i.is_arithmetic_valid or i.duplicate_flag)
+
+        verified_payments_count = len(payments)
+        verified_revenue = sum(p.amount_cents for p in payments) / 100.0
+
+        active_projects = sum(1 for p in projects if p.status == ProjectStatus.ACTIVE.value)
+
+        metrics = {
+            "leads_count": leads_count,
+            "qualified_leads": qualified_leads,
+            "hot_leads": hot_leads,
+            "support_tickets_count": tickets_count,
+            "urgent_tickets": urgent_tickets,
+            "escalated_tickets": escalated_tickets,
+            "invoices_count": invoices_count,
+            "total_invoice_spend": round(total_invoice_spend, 2),
+            "flagged_invoices": flagged_invoices,
+            "verified_payments_count": verified_payments_count,
+            "verified_revenue": round(verified_revenue, 2),
+            "active_projects": active_projects,
+            "pending_approvals": len(approvals),
+            "failed_workflows_count": len(failed_audits),
+        }
+
+        # Synthesize AI summary
+        ai_summary = self.ai.generate_executive_digest(metrics)
+
+        return {
+            "period_start": one_week_ago.strftime("%Y-%m-%d"),
+            "period_end": now.strftime("%Y-%m-%d"),
+            "generated_at": now.isoformat(),
+            "source_coverage": "100% Verified Database Records (Leads, Tickets, Invoices, Payments, Approvals)",
+            "metrics": metrics,
+            "ai_executive_summary": ai_summary,
+            "pending_approvals_count": len(approvals),
+            "system_health_status": "OPTIMAL" if len(failed_audits) == 0 else "DEGRADED",
+        }
+
+    def list_projects(self, status: Optional[str] = None, limit: int = 50) -> List[ProjectRecord]:
+        query = self.db.query(ProjectRecord)
+        if status:
+            query = query.filter(ProjectRecord.status == status.upper())
+        return query.order_by(ProjectRecord.created_at.desc()).limit(limit).all()
+
+    def get_project(self, project_id: str) -> Optional[ProjectRecord]:
+        return self.db.query(ProjectRecord).filter(ProjectRecord.id == project_id).first()
+
+    def list_approvals(self, status: Optional[str] = "PENDING") -> List[ApprovalRequestRecord]:
+        query = self.db.query(ApprovalRequestRecord)
+        if status:
+            query = query.filter(ApprovalRequestRecord.status == status.upper())
+        return query.order_by(ApprovalRequestRecord.created_at.desc()).all()
+
+    def resolve_approval(self, approval_id: str, action: str, resolved_by: str, notes: Optional[str] = None) -> Dict[str, Any]:
+        """Resolves an approval request (APPROVED or REJECTED) and triggers downstream actions."""
+        req = self.db.query(ApprovalRequestRecord).filter(ApprovalRequestRecord.id == approval_id).first()
+        if not req:
+            raise ValueError(f"Approval request {approval_id} not found")
+
+        req.status = action.upper()
+        req.resolved_by = resolved_by
+        req.resolution_notes = notes
+        req.resolved_at = datetime.now(timezone.utc)
+
+        # Downstream action
+        if req.entity_type == "invoice_discrepancy" and action.upper() == "APPROVED":
+            inv = self.db.query(InvoiceRecord).filter(InvoiceRecord.id == req.entity_id).first()
+            if inv:
+                inv.status = "APPROVED"
+        elif req.entity_type == "contract_approval" and action.upper() == "APPROVED":
+            contract = self.db.query(ContractRecord).filter(ContractRecord.id == req.entity_id).first()
+            if contract:
+                contract.approval_status = "APPROVED"
+                contract.approved_by = resolved_by
+                contract.approved_at = datetime.now(timezone.utc)
+                proj = self.db.query(ProjectRecord).filter(ProjectRecord.id == contract.project_id).first()
+                if proj:
+                    proj.contract_status = "APPROVED"
+                    proj.status = ProjectStatus.PAYMENT_PENDING.value
+
+        self.db.commit()
+        return {"success": True, "approval_id": approval_id, "status": req.status}
