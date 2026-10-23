@@ -254,7 +254,6 @@ class OrchestrationEngine:
         Validates official Stripe-Signature HMAC-SHA256, verifies event idempotency,
         and marks project payments as verified based solely on authentic cryptographic proof.
         """
-        # Step 1: Cryptographic Signature Verification
         is_valid_sig = self.stripe.verify_webhook_signature(payload_bytes, signature_header)
         if not is_valid_sig:
             audit = AuditEventRecord(
@@ -267,35 +266,29 @@ class OrchestrationEngine:
             self.db.commit()
             raise ValueError("Unauthorized Stripe signature: HMAC verification failed")
 
-        # Step 2: Parse Event
         try:
             event = json.loads(payload_bytes.decode("utf-8"))
         except Exception:
             raise ValueError("Malformed JSON webhook body")
 
         event_id = event.get("id")
-        event_type = event.get("type")
         if not event_id:
             raise ValueError("Missing Stripe event id")
 
-        # Step 3: Idempotency Check
         if self.stripe.is_event_processed(event_id):
             logger.info(f"Duplicate Stripe event {event_id} ignored via idempotency check.")
             return {"success": True, "event_id": event_id, "status": "duplicate_ignored"}
 
-        # Step 4: Validate Event Intent
         data_object = event.get("data", {}).get("object", {})
         amount = data_object.get("amount", 0)
         currency = data_object.get("currency", "usd")
         metadata = data_object.get("metadata", {})
         project_code = metadata.get("project_code")
 
-        # Find project if metadata provided
         project = None
         if project_code:
             project = self.db.query(ProjectRecord).filter(ProjectRecord.project_code == project_code).first()
 
-        # Step 5: Save Verified Payment Record
         payment = PaymentRecord(
             stripe_event_id=event_id,
             project_id=project.id if project else None,
@@ -335,3 +328,39 @@ class OrchestrationEngine:
             "project_code": project_code,
             "payment_status": "PAID",
         }
+
+    def provision_collaboration_channel(self, project_id: str) -> Dict[str, Any]:
+        """Provisions a dedicated Slack collaboration channel for the customer project."""
+        project = self.db.query(ProjectRecord).filter(ProjectRecord.id == project_id).first()
+        if not project:
+            raise ValueError(f"Project {project_id} not found")
+
+        res = self.slack.provision_project_channel(project.project_code)
+        channel_name = res.get("channel", f"#proj-{project.project_code.lower()}")
+        project.slack_channel = channel_name
+
+        # Post welcome card
+        welcome_msg = (
+            f":tada: *Collaboration Workspace Activated for {project.client_name}*\n"
+            f"*Project Code:* {project.project_code}\n"
+            f"*Service Tier:* {project.service_tier}\n"
+            f"*Contract Status:* {project.contract_status} | *Payment Status:* {project.payment_status}"
+        )
+        self.slack.send_notification(
+            channel=channel_name,
+            title=f"Welcome to Project {project.project_code}",
+            message=welcome_msg,
+            priority="SUCCESS",
+        )
+
+        audit = AuditEventRecord(
+            event_type=EventType.SLACK_CHANNEL_PROVISIONED.value,
+            action="PROVISION_CHANNEL",
+            status="SUCCESS",
+            entity_id=project.id,
+            details_json=json.dumps({"channel": channel_name}),
+        )
+        self.db.add(audit)
+        self.db.commit()
+
+        return {"success": True, "project_code": project.project_code, "channel": channel_name}
