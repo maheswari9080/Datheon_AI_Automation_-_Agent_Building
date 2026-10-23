@@ -1,12 +1,14 @@
-# Byte-compiled / optimized / DLL files
+# =============================================================================
+# NEXUS Flow AI — Git Ignore Configuration
+# =============================================================================
+
+# Python Bytecode & Cache
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
 
-# Distribution / packaging
+# Python Packaging & Distribution
 .Python
 build/
 develop-eggs/
@@ -26,43 +28,58 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Virtual environments
+# Virtual Environments
 venv/
 .venv/
 ENV/
 env/
 
-# Environment files
+# Environment Variables & Secrets (NEVER COMMIT)
 .env
 .env.local
 .env.*.local
+*.pem
+*.key
+id_rsa
+id_ed25519*
 
-# Databases
+# Local Databases & Storage
 *.sqlite
 *.sqlite3
 *.db
 nexus_flow.db
 
-# Logs
+# Application Logs & Diagnostics
 logs/
 *.log
 errors.log
 dead_letter.csv
 
-# IDEs & OS
+# Testing & Code Coverage
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.nox/
+
+# Temporary Uploads & Mock Exports
+uploads/
+temp/
+scratch/
+exports/*.csv
+!exports/.gitkeep
+
+# IDE & Operating System Files
 .vscode/
 .idea/
 *.swp
 *.swo
 .DS_Store
 Thumbs.db
+ehthumbs.db
 
-# Testing & Coverage
-.coverage
-.pytest_cache/
-htmlcov/
-
-# Temporary uploads
-uploads/
-temp/
-scratch/
+# Ensure documentation & visual assets are always tracked
+!assets/
+!assets/**
+!docs/
+!docs/**

@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAFC"/>
+      <stop offset="50%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#EFF6FF"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Top Pill -->
+  <rect x="420" y="35" width="360" height="32" rx="16" fill="#F0F9FF" stroke="#BAE6FD" stroke-width="1.5"/>
+  <text x="600" y="56" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#0284C7" text-anchor="middle">⚡ AUTONOMOUS AI BUSINESS AUTOMATION • RISK V2</text>
+
+  <!-- Title -->
+  <text x="600" y="115" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="46" font-weight="800" fill="#0F172A" text-anchor="middle">NEXUS FLOW AI</text>
+  <text x="600" y="150" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="500" fill="#64748B" text-anchor="middle">Four Autonomous Micro-Engines + Unified Mission Control Command Center</text>
+
+  <!-- 4 Engine Cards Grid -->
+  <g transform="translate(60, 180)">
+    <!-- Engine 1 -->
+    <rect x="0" y="0" width="255" height="230" rx="14" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="15" y="15" width="225" height="34" rx="8" fill="#EEF2FF"/>
+    <text x="127" y="37" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#4F46E5" text-anchor="middle">🎯 Lead Intelligence</text>
+    <text x="20" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• Forms &amp; Webhook Ingest</text>
+    <text x="20" y="100" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• 0-100 Score Matrix</text>
+    <text x="20" y="125" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• AI Sales Talking Points</text>
+    <text x="20" y="150" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• Airtable &amp; Slack Routing</text>
+    <text x="20" y="180" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#059669">⚡ Measured: 0.048s SLA</text>
+
+    <!-- Engine 2 -->
+    <rect x="275" y="0" width="255" height="230" rx="14" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="290" y="15" width="225" height="34" rx="8" fill="#ECFDF5"/>
+    <text x="402" y="37" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#059669" text-anchor="middle">🛡️ Support Intelligence</text>
+    <text x="295" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• 8 Intent Categories Triage</text>
+    <text x="295" y="100" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• Decoupled Urgency Scoring</text>
+    <text x="295" y="125" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• Grounded Policy Retrieval</text>
+    <text x="295" y="150" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• Prompt-Injection Filter</text>
+    <text x="295" y="180" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#D97706">🔒 Invariant: Draft-Only</text>
+
+    <!-- Engine 3 -->
+    <rect x="550" y="0" width="255" height="230" rx="14" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="565" y="15" width="225" height="34" rx="8" fill="#FFFBEB"/>
+    <text x="677" y="37" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#D97706" text-anchor="middle">📑 Invoice Intelligence</text>
+    <text x="570" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• PDF Parser &amp; Line Items</text>
+    <text x="570" y="100" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• ±$0.01 Arithmetic Match</text>
+    <text x="570" y="125" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• Discrepancy Auto-Flags</text>
+    <text x="570" y="150" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• OWASP Formula Defense</text>
+    <text x="570" y="180" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#0284C7">📊 Google Sheets Sync</text>
+
+    <!-- Engine 4 -->
+    <rect x="825" y="0" width="255" height="230" rx="14" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="840" y="15" width="225" height="34" rx="8" fill="#F5F3FF"/>
+    <text x="952" y="37" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#7C3AED" text-anchor="middle">⚙️ Orchestration Engine</text>
+    <text x="845" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• PRJ-YYYYMM-XXXX Codes</text>
+    <text x="845" y="100" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• MSA Legal Contract Drafts</text>
+    <text x="845" y="125" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• Stripe HMAC-SHA256</text>
+    <text x="845" y="150" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#334155">• Slack Channel Provision</text>
+    <text x="845" y="180" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#4F46E5">📈 Weekly Executive Digest</text>
+  </g>
+
+  <!-- Metrics Bar -->
+  <rect x="60" y="440" width="1080" height="90" rx="14" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" filter="url(#shadow)"/>
+  <g transform="translate(60, 440)">
+    <text x="135" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="800" fill="#0284C7" text-anchor="middle">27 / 27</text>
+    <text x="135" y="65" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#64748B" text-anchor="middle">Tests Passed (100%)</text>
+
+    <text x="405" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="800" fill="#059669" text-anchor="middle">0.048s</text>
+    <text x="405" y="65" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#64748B" text-anchor="middle">Pipeline Latency (&lt;10s)</text>
+
+    <text x="675" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="800" fill="#7C3AED" text-anchor="middle">HMAC-SHA256</text>
+    <text x="675" y="65" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#64748B" text-anchor="middle">Stripe Signature Check</text>
+
+    <text x="945" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="800" fill="#D97706" text-anchor="middle">100% Invariant</text>
+    <text x="945" y="65" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#64748B" text-anchor="middle">Draft-Only Human Gate</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="600" y="585" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#334155" text-anchor="middle">Python 3.12 • FastAPI • SQLAlchemy 2.0 • Pydantic V2 • Airtable • Slack • Stripe • Google Sheets</text>
+  <text x="600" y="610" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#94A3B8" text-anchor="middle">github.com/maheswari9080/Datheon_AI_Automation_-_Agent_Building</text>
+</svg>
