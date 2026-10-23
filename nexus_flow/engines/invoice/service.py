@@ -3,6 +3,7 @@
 import io
 import json
 import time
+from datetime import datetime, timezone, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 from sqlalchemy.orm import Session
 from pypdf import PdfReader
@@ -42,7 +43,7 @@ class InvoiceEngine:
         if size_mb > max_mb:
             return False, f"File size ({size_mb:.2f}MB) exceeds {max_mb}MB limit"
 
-        # Check PDF Magic Bytes '%PDF-'
+        # Check PDF Magic Bytes '%PDF-' or allow text test fixtures
         if not content.startswith(b"%PDF-") and not filename.lower().endswith(".txt"):
             return False, "Invalid file format: File header is not a valid PDF or text invoice"
 
@@ -68,3 +69,47 @@ class InvoiceEngine:
             return content.decode("utf-8", errors="ignore")
         except Exception:
             return "Vendor: Standard Cloud Solutions\nInvoice: INV-9901\nTotal: $1,250.00"
+
+    def extract_structured_data(self, raw_text: str) -> ExtractedInvoiceData:
+        """Extracts financial and line item information using AI extraction or heuristics."""
+        raw_res = self.ai.extract_invoice_fields(raw_text)
+
+        line_items = []
+        for item in raw_res.get("line_items", []):
+            qty = float(item.get("quantity", 1.0) or 1.0)
+            price = float(item.get("unit_price", 0.0) or 0.0)
+            ltotal = float(item.get("line_total", qty * price) or (qty * price))
+            line_items.append(
+                LineItemCreate(
+                    description=item.get("description", "Unspecified Service Item"),
+                    quantity=qty,
+                    unit_price=price,
+                    line_total=ltotal,
+                )
+            )
+
+        return ExtractedInvoiceData(
+            vendor=raw_res.get("vendor", "Acme Vendor"),
+            invoice_number=raw_res.get("invoice_number", f"INV-{int(time.time())}"),
+            invoice_date=raw_res.get("invoice_date", datetime.now(timezone.utc).strftime("%Y-%m-%d")),
+            currency=raw_res.get("currency", "USD"),
+            line_items=line_items,
+            subtotal=float(raw_res.get("subtotal", 0.0) or 0.0),
+            discount=float(raw_res.get("discount", 0.0) or 0.0),
+            tax_amount=float(raw_res.get("tax_amount", 0.0) or 0.0),
+            extracted_total=float(raw_res.get("extracted_total", 0.0) or 0.0),
+            payment_status=raw_res.get("payment_status", "UNPAID"),
+        )
+
+    def check_duplicate(self, vendor: str, invoice_number: str) -> Optional[InvoiceRecord]:
+        """Detects whether an invoice with the identical vendor and number was already registered."""
+        if not vendor or not invoice_number:
+            return None
+        return (
+            self.db.query(InvoiceRecord)
+            .filter(
+                InvoiceRecord.vendor == vendor,
+                InvoiceRecord.invoice_number == invoice_number,
+            )
+            .first()
+        )
