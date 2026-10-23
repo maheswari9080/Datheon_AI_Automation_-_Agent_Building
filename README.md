@@ -10,6 +10,7 @@
 [![Pydantic](https://img.shields.io/badge/Pydantic-V2.0+-E92063?style=for-the-badge&logo=pydantic&logoColor=white)](https://docs.pydantic.dev)
 [![Tests](https://img.shields.io/badge/Tests-27%20Passed%20(100%25)-10B981?style=for-the-badge&logo=pytest&logoColor=white)]()
 [![Security](https://img.shields.io/badge/Security-Stripe%20HMAC--SHA256-6366F1?style=for-the-badge&logo=stripe&logoColor=white)]()
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-22C55E?style=for-the-badge&logo=githubpages&logoColor=white)](https://maheswari9080.github.io/Datheon_AI_Automation_-_Agent_Building/)
 [![License](https://img.shields.io/badge/License-MIT-0284C7?style=for-the-badge)](LICENSE)
 
 <br/>
@@ -18,6 +19,9 @@
 <img src="assets/hero_banner_light.png" alt="NEXUS Flow AI Hero Banner" width="100%" style="border-radius: 14px; box-shadow: 0 8px 30px rgba(0,0,0,0.06); border: 1px solid #E2E8F0;" />
 
 </div>
+
+> 🌐 **Live Interactive Web Demo**: Experience the full Mission Control Command Center deployed live on GitHub Pages: [**maheswari9080.github.io/Datheon_AI_Automation_-_Agent_Building**](https://maheswari9080.github.io/Datheon_AI_Automation_-_Agent_Building/)
+> *See [docs/GITHUB_PAGES_SETUP.md](docs/GITHUB_PAGES_SETUP.md) for 1-minute hosting setup and deployment instructions.*
 
 ---
 

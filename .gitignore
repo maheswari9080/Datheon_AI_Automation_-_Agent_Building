@@ -66,6 +66,7 @@ htmlcov/
 uploads/
 temp/
 scratch/
+_site/
 exports/*.csv
 !exports/.gitkeep
 
