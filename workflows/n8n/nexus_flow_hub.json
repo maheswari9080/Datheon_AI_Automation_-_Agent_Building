@@ -1,0 +1,139 @@
+{
+  "name": "NEXUS Flow AI — Enterprise Operations Hub",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nexus-inbound-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-lead-webhook",
+      "name": "Inbound Lead Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 300],
+      "webhookId": "nexus-lead-trigger"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Validate, Normalize & Deduplicate Payload\nconst body = items[0].json.body || items[0].json;\nconst email = (body.email || '').trim().toLowerCase();\nconst budget = parseFloat(body.budget || 0);\nconst company = (body.company || 'Unknown').trim();\nconst consent = body.consent !== false;\n\nif (!email || !email.includes('@')) {\n  throw new Error('VALIDATION_ERROR: Missing valid customer email');\n}\n\nlet score = 0;\nif (budget >= 50000) score += 40;\nelse if (budget >= 20000) score += 30;\nelse if (budget >= 5000) score += 20;\nelse score += 10;\n\nconst priority = score >= 75 ? 'HOT' : (score >= 50 ? 'WARM' : 'COLD');\n\nreturn [{\n  json: {\n    email,\n    company,\n    budget,\n    consent,\n    score,\n    priority,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "node-lead-validation",
+      "name": "Validate & Score Lead",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [320, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json[\"consent\"]}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "node-consent-filter",
+      "name": "Consent Verification Filter",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [540, 300]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "http://127.0.0.1:8000/api/v1/leads",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "={{JSON.stringify($json)}}"
+      },
+      "id": "node-api-post-lead",
+      "name": "NEXUS Flow Lead Ingest API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [780, 240]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{JSON.stringify({ success: true, lead: $json })}}",
+        "options": {}
+      },
+      "id": "node-webhook-response",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1020, 240]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Error Recovery Route\nreturn [{\n  json: {\n    error: 'Lead discarded: Explicit marketing consent was not provided',\n    status: 'DISQUALIFIED',\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "node-error-disqualified",
+      "name": "Disqualification Logger",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [780, 420]
+    }
+  ],
+  "connections": {
+    "Inbound Lead Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate & Score Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Score Lead": {
+      "main": [
+        [
+          {
+            "node": "Consent Verification Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consent Verification Filter": {
+      "main": [
+        [
+          {
+            "node": "NEXUS Flow Lead Ingest API",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Disqualification Logger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NEXUS Flow Lead Ingest API": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

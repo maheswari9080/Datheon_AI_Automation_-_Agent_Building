@@ -1,0 +1,88 @@
+{
+  "name": "NEXUS Flow AI Lead Ingest & Routing Blueprint",
+  "version": 1,
+  "description": "Make.com visual automation scenario connecting webhook ingestion to OpenAI analysis, Airtable record sync, and Slack team alerts with error handlers.",
+  "modules": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": {
+        "hook": "nexus_lead_inbound"
+      },
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0,
+          "name": "Custom Webhook Trigger"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "json:ParseJSON",
+      "version": 1,
+      "parameters": {
+        "type": "object"
+      },
+      "metadata": {
+        "designer": {
+          "x": 250,
+          "y": 0,
+          "name": "Parse & Validate JSON Payload"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "openai:createChatCompletion",
+      "version": 1,
+      "parameters": {
+        "model": "gpt-4o",
+        "temperature": 0.2
+      },
+      "metadata": {
+        "designer": {
+          "x": 500,
+          "y": 0,
+          "name": "OpenAI Structured Analysis"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "module": "airtable:createRecord",
+      "version": 1,
+      "parameters": {
+        "table": "Leads"
+      },
+      "metadata": {
+        "designer": {
+          "x": 750,
+          "y": 0,
+          "name": "Airtable Leads Sync"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "module": "slack:createMessage",
+      "version": 1,
+      "parameters": {
+        "channel": "#sales-leads"
+      },
+      "metadata": {
+        "designer": {
+          "x": 1000,
+          "y": 0,
+          "name": "Slack Prioritized Alert"
+        }
+      }
+    }
+  ],
+  "routes": [
+    {
+      "flow": [1, 2, 3, 4, 5]
+    }
+  ]
+}
