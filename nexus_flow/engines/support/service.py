@@ -1,7 +1,8 @@
-"""Support Intelligence Engine: Email ingestion, prompt defense, 8-intent triage, and urgency scoring."""
+"""Support Intelligence Engine: Email ingestion, triage, grounded drafting, and escalation."""
 
 import json
 import uuid
+import time
 from typing import Any, Dict, List, Optional, Tuple
 from sqlalchemy.orm import Session
 from nexus_flow.core.config import get_settings
@@ -59,3 +60,24 @@ class SupportEngine:
         evaluating urgency separately from customer sentiment.
         """
         return self.ai.triage_support_ticket(subject, sanitized_body)
+
+    def retrieve_grounding_evidence(self, query: str, intent: str) -> List[Dict[str, Any]]:
+        """Retrieves approved knowledge base articles relevant to the inquiry."""
+        return self.kb.search(query=query, category=intent, top_k=2)
+
+    def generate_grounded_draft(
+        self, ticket_data: Dict[str, Any], kb_articles: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """Drafts a response strictly grounded in verified documentation, enforcing draft-only mode."""
+        draft_result = self.ai.draft_grounded_support_response(ticket_data, kb_articles)
+
+        # Register draft in email adapter (enforces draft-only)
+        self.email_adapter.create_draft(
+            to_address=ticket_data["sender"],
+            subject=ticket_data["subject"],
+            body_text=draft_result["draft_body"],
+            in_reply_to=ticket_data["message_id"],
+            labels=["NEXUS/Support-Draft", f"Intent/{ticket_data.get('intent', 'general')}"],
+        )
+
+        return draft_result
