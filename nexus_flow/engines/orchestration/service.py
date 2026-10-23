@@ -195,6 +195,7 @@ class OrchestrationEngine:
             approval_status="PENDING",
         )
         self.db.add(contract)
+        self.db.flush()
         project.contract_status = "DRAFTED"
         project.status = ProjectStatus.CONTRACT_DRAFTED.value
 

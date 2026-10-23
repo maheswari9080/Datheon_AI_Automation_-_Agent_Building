@@ -2,7 +2,7 @@
 
 from typing import Any, Generic, List, Optional, TypeVar
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 DataT = TypeVar("DataT")
 
@@ -27,6 +27,8 @@ class HealthCheckResponse(BaseModel):
     services: dict = Field(default_factory=dict)
 
 class AuditEventSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     event_type: str
     action: str
@@ -36,5 +38,3 @@ class AuditEventSchema(BaseModel):
     details_json: Optional[str] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True

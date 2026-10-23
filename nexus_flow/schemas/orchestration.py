@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List, Optional
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 class CustomerIntakeRequest(BaseModel):
     client_name: str = Field(..., min_length=2, max_length=255)
@@ -12,6 +12,8 @@ class CustomerIntakeRequest(BaseModel):
     estimated_budget: Optional[float] = 10000.0
 
 class ProjectResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     project_code: str
     client_name: str
@@ -25,15 +27,14 @@ class ProjectResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
-
 class ContractDraftRequest(BaseModel):
     project_id: str
     template_version: Optional[str] = "MSA-v2.1"
     special_terms: Optional[str] = None
 
 class ContractResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     project_id: str
     template_version: str
@@ -44,8 +45,6 @@ class ContractResponse(BaseModel):
     approved_at: Optional[datetime] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
 
 class StripeWebhookPayload(BaseModel):
     id: str

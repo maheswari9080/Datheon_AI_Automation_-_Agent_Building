@@ -2,7 +2,7 @@
 
 from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 class LeadIngestRequest(BaseModel):
     email: EmailStr
@@ -27,6 +27,8 @@ class LeadQualificationResult(BaseModel):
     assigned_rep: str
 
 class LeadResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     email: str
     full_name: str
@@ -50,5 +52,3 @@ class LeadResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True

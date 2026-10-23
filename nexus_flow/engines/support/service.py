@@ -140,6 +140,7 @@ class SupportEngine:
             escalation_reason=escalation_reason,
         )
         self.db.add(ticket_record)
+        self.db.flush()
 
         # If escalation triggered, register an approval request and dispatch priority alert
         if requires_escalation:

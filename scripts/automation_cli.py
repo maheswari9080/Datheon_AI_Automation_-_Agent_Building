@@ -75,7 +75,7 @@ def process_batch(
             }
 
             # Business rule validation: requires valid email or entity id
-            email = row.get("email", "")
+            email = next((v for k, v in row.items() if "email" in k), "")
             if "@" not in email and "id" not in row:
                 error_count += 1
                 row["error_reason"] = "Missing valid email address and ID identifier"

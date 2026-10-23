@@ -2,7 +2,7 @@
 
 from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 class SupportIngestRequest(BaseModel):
     message_id: Optional[str] = None
@@ -17,6 +17,8 @@ class GroundedDraftResponse(BaseModel):
     policy_notes: Optional[str] = None
 
 class SupportTicketResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     message_id: str
     sender: str
@@ -35,8 +37,6 @@ class SupportTicketResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
 
 class EscalationRequest(BaseModel):
     ticket_id: str
